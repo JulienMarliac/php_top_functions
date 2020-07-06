@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Check if max is result is givent
+if [ -z "$2" ]; then
+  max_result=10
+else
+  max_result=$2
+fi
+
+echo "Fetching $max_result most called php functions in $1"
+find $1 -type f | xargs cat | gawk '
+ BEGIN {
+ } {
+     for (i=1; i<=NF; i++) {
+         word = $i
+         check = match(word,/->\w+\(/, matched)
+         if(check != 0){
+           words[matched[0]]++
+         }
+     }
+ }
+ END {
+     for (w in words)
+          printf("%3d %s\n", words[w], w)
+ } ' | sort -rn | head -$max_result
